@@ -18,6 +18,9 @@ import {
 } from '../actions'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
+const EASY_COLOR = '#FFC107'
+const MEDIUM_COLOR = '#009688'
+const HARD_COLOR = '#673AB7'
 
 class Game extends Component {
   constructor (props) {
@@ -75,41 +78,50 @@ class Game extends Component {
   async onSuccess () {
     const { player } = this.props
     const { category } = player.word
+    const { queue, wordsAlreadyAppeared, currentPlayerIndex } = this.props.playingQueue
     const scoreEntry = { category, result: 'solved' }
-    await this.props.updatePlayer(player, this.props.playingQueue.wordsAlreadyAppeared, scoreEntry)
-    this.props.currentPlayerChange(this.props.playingQueue.queue[0])
+    await this.props.updatePlayer(player, wordsAlreadyAppeared, scoreEntry)
+    this.props.currentPlayerChange(queue[currentPlayerIndex + 1])
     // this.onNextButton()
   }
 
   async onFail () {
     const { player } = this.props
     const { category } = player.word
+    const { queue, wordsAlreadyAppeared, currentPlayerIndex } = this.props.playingQueue
     const scoreEntry = { category, result: 'failed' }
-    await this.props.updatePlayer(player, this.props.playingQueue.wordsAlreadyAppeared, scoreEntry)
-    this.props.currentPlayerChange(this.props.playingQueue.queue[0])
+    await this.props.updatePlayer(player, wordsAlreadyAppeared, scoreEntry)
+    this.props.currentPlayerChange(queue[currentPlayerIndex + 1])
     // this.onNextButton()
   }
 
-  renderCard (player, timer) {
+  stylizeWord (word) {
+    return word.charAt(0).toUpperCase() + word.slice(1)
+  }
+
+  renderCard (player, timer, stylizeWord) {
     const {
       wordContainerStyle,
+      playerTurnTextStyle,
       wordTextStyle,
       timerTextStyle
     } = styles
 
+    let color = null
+    if (player.word.category === 'easy') color = EASY_COLOR
+    else if (player.word.category === 'medium') color = MEDIUM_COLOR
+    else if (player.word.category === 'hard') color = HARD_COLOR
+
     return (
       <Card
         flexDirection='column'
-        containerStyle={wordContainerStyle}
+        containerStyle={[wordContainerStyle, { backgroundColor: color }]}
         wrapperStyle={{ flex: 1, flexDirection: 'column', justifyContent: 'space-evenly' }}
       >
-        <Text style={wordTextStyle}>{player.word.word}</Text>
+        <Text style={playerTurnTextStyle}>{player.name}'s Turn</Text>
+        <Text style={wordTextStyle}>{stylizeWord(player.word.word)}</Text>
         <Text style={timerTextStyle}>{timer}</Text>
       </Card>
-      // {/* <CardContainer style={wordContainerStyle}>
-      //   <Text style={wordTextStyle}>{player.word.word}</Text>
-      //   <Text style={timerTextStyle}>{timer}</Text>
-      // </CardContainer> */}
     )
   }
 
@@ -117,7 +129,6 @@ class Game extends Component {
     const {
       mainContainerStyle,
       closeButtonStyle,
-      playerTurnTextStyle,
       actionButtonsContainerStyle
     } = styles
 
@@ -132,23 +143,22 @@ class Game extends Component {
           />
         </View>
 
-        <View>
-          <Text style={playerTurnTextStyle}>{this.props.player.name}'s Turn</Text>
-        </View>
-
         <View style={{ height: SCREEN_HEIGHT / 2.5 }}>
           <Deck
             data={this.props.playingQueue.queue}
             renderCard={this.renderCard}
             timer={this.props.timer}
+            stylizeWord={this.stylizeWord}
+            onSwipeRight={this.onSuccess}
+            onSwipeLeft={this.onFail}
           />
         </View>
 
-        <View style={[actionButtonsContainerStyle, { marginTop: 30, justifyContent: 'center' }]}>
+        <View style={[actionButtonsContainerStyle, { marginTop: 45, justifyContent: 'center' }]}>
           <Icon
             name='close'
             color='#aa2e25'
-            size={30}
+            size={40}
             onPress={this.onFail}
             reverse
             raised
@@ -156,7 +166,7 @@ class Game extends Component {
           <Icon
             name='check-circle'
             color='#4caf50'
-            size={30}
+            size={40}
             onPress={this.onSuccess}
             reverse
             raised
@@ -215,7 +225,7 @@ const styles = {
     fontSize: 28,
     alignSelf: 'center',
     marginTop: 40,
-    color: '#FFF'
+    color: '#000'
   },
   wordContainerStyle: {
     height: '100%',
@@ -253,18 +263,7 @@ const styles = {
   }
 }
 
-const mapStateToProps = (state) => {
-  const { category } = state.player.word
-  const { wordContainerStyle } = styles
-
-  if (category === 'easy') {
-    styles.wordContainerStyle = { ...wordContainerStyle, backgroundColor: '#FFC107' }
-  } else if (category === 'medium') {
-    styles.wordContainerStyle = { ...wordContainerStyle, backgroundColor: '#009688' }
-  } else if (category === 'hard') {
-    styles.wordContainerStyle = { ...wordContainerStyle, backgroundColor: '#673AB7' }
-  }
-
+const mapStateToProps = state => {
   return state
 }
 
