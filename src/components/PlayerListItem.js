@@ -1,39 +1,71 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, Text, TouchableHighlight } from 'react-native'
+import { View } from 'react-native'
+import { CheckBox } from 'react-native-elements'
 import PropTypes from 'prop-types'
 import { playerDelete } from '../actions'
 
-const PlayerListItem = ({ player, playerDelete, teamsUpdate, playersList }) => {
-  const { playerNameTextStyle } = styles
+class PlayerListItem extends Component {
+  constructor (props) {
+    super(props)
+    this.state = { checked: false }
+    this.onPress = this.onPress.bind(this)
+    this.onLongPress = this.onLongPress.bind(this)
+  }
 
-  const onPress = () => {
+  onPress () {
+    this.setState({ checked: !this.state.checked })
+    // playerDelete(player.name)
+  }
+
+  onLongPress () {
+    const { player, playerDelete } = this.props
     playerDelete(player.name)
   }
 
-  return (
-    <TouchableHighlight underlayColor='rgba(2,2,2,0.08)' onPress={onPress}>
+  render () {
+    const { uncheckedContainerStyle, checkedContainerStyle, textStyle } = styles
+    return (
       <View>
-        <Text style={playerNameTextStyle}>• {player.name}</Text>
+        <CheckBox
+          center
+          title={this.props.player.name}
+          checkedTitle={`Delete ${this.props.player.name}?`}
+          iconRight
+          iconType='material'
+          checkedIcon='clear'
+          uncheckedIcon='add'
+          checkedColor='red'
+          uncheckedColor='#F1FAEE'
+          checked={this.state.checked}
+          onPress={this.onPress}
+          onIconPress={this.onPress}
+          onLongPress={this.onLongPress}
+          onLongIconPress={this.onLongPress}
+          containerStyle={this.state.checked ? checkedContainerStyle : uncheckedContainerStyle}
+          textStyle={textStyle}
+        />
       </View>
-    </TouchableHighlight>
-  )
+    )
+  }
 }
 
 PlayerListItem.propTypes = {
   player: PropTypes.object,
-  playerDelete: PropTypes.func,
-  playersList: PropTypes.array,
-  teamsUpdate: PropTypes.func
+  playerDelete: PropTypes.func
 }
 
 const styles = {
-  playerNameTextStyle: {
-    fontSize: 18,
-    paddingLeft: 15,
-    paddingTop: 5,
-    paddingBottom: 5,
-    color: '#FFF'
+  uncheckedContainerStyle: {
+    backgroundColor: '#457B9D',
+    borderColor: '#457B9D'
+  },
+  checkedContainerStyle: {
+    backgroundColor: '#1D3557',
+    borderColor: '#1D3557'
+  },
+  textStyle: {
+    color: '#F1FAEE'
   }
 }
 

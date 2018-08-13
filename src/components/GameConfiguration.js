@@ -1,13 +1,12 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 import { Text, TextInput, View, FlatList } from 'react-native'
-import { Icon } from 'react-native-elements'
+import { Icon, Card, Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { Actions } from 'react-native-router-flux'
 import PropTypes from 'prop-types'
 import PlayerListItem from './PlayerListItem'
 import TeamMembersListItem from './TeamMembersListItem'
-import { CardContainer, Input, Button } from './common'
 import {
   playerNameUpdate,
   playerAdd,
@@ -79,10 +78,10 @@ class GameConfiguration extends Component {
   render () {
     const {
       mainContainerStyle,
-      playerCardContainerStyle,
+      playerCardStyle,
       playerInputContainerStyle,
       addButtonStyle,
-      playerListCardContainerStyle,
+      playerListCardStyle,
       normalTextStyle,
       teamNameTextStyle,
       outerTeamsCardContainerStyle,
@@ -93,40 +92,44 @@ class GameConfiguration extends Component {
 
     return (
       <View style={mainContainerStyle}>
-        <CardContainer style={playerCardContainerStyle}>
+        <Card
+          containerStyle={playerCardStyle.containerStyle}
+          wrapperStyle={playerCardStyle.wrapperStyle}
+        >
           <Input
+            shake
             label='Players'
             placeholder='Suyash'
+            rightIcon={
+              <Icon
+                raised
+                reverse
+                name='add'
+                size={15}
+                color='#E63946'
+                onPress={this.onAddPlayerPressed}
+              />
+            }
+            containerStyle={{ flex: 1 }}
+            labelStyle={{ color: '#FFF' }}
+            inputStyle={{ color: '#1D3557' }}
             onChangeText={this.onNameChange}
             value={this.props.player.name}
-            parentStyles={{
-              parentContainerStyle: playerInputContainerStyle,
-              parentLabelStyle: { color: '#FFF' },
-              parentInputStyle: { color: '#FFF' }
-            }}
           />
-          <View style={addButtonStyle}>
-            <Icon
-              raised
-              reverse
-              name='add'
-              size={15}
-              color='#83BCA9'
-              onPress={this.onAddPlayerPressed}
-            />
-          </View>
-        </CardContainer>
+        </Card>
 
-        <CardContainer style={playerListCardContainerStyle}>
+        <Card
+          containerStyle={playerListCardStyle}
+        >
           <FlatList
             data={this.props.playersList}
             extraData={this.props.playersList}
             renderItem={this.renderPlayerNames}
             keyExtractor={(player) => player.name}
           />
-        </CardContainer>
+        </Card>
 
-        <CardContainer style={outerTeamsCardContainerStyle}>
+        <Card containerStyle={outerTeamsCardContainerStyle}>
           <View style={{ flex: 1 }}>
             <Text style={[normalTextStyle, { paddingLeft: 20 }]}>Team Names:</Text>
             <TextInput
@@ -156,36 +159,36 @@ class GameConfiguration extends Component {
             </View>
 
             <View style={teamsViewContainerStyle}>
-              <CardContainer style={teamsCardContainerStyle}>
+              <Card containerStyle={teamsCardContainerStyle}>
                 <FlatList
                   data={this.props.teamMembers.teamA}
                   extraData={this.props.teamMembers.teamA}
                   renderItem={this.renderTeamMembers}
                   keyExtractor={(player) => player.name}
                 />
-              </CardContainer>
+              </Card>
 
-              <CardContainer style={teamsCardContainerStyle}>
+              <Card containerStyle={teamsCardContainerStyle}>
                 <FlatList
                   data={this.props.teamMembers.teamB}
                   extraData={this.props.teamMembers.teamB}
                   renderItem={this.renderTeamMembers}
                   keyExtractor={(player) => player.name}
                 />
-              </CardContainer>
+              </Card>
             </View>
           </View>
 
           <View style={{ flex: 0.5 }}>
             <Button
+              raised
+              title='Begin Game'
+              buttonStyle={beginGameButtonStyle}
               disabled={this.props.beginGameButtonDisabled}
-              style={{ buttonStyle: beginGameButtonStyle, textStyle: { color: '#FFF' } }}
               onPress={this.onBeginGame}
-            >
-              Begin Game
-            </Button>
+            />
           </View>
-        </CardContainer>
+        </Card>
       </View>
     )
   }
@@ -209,30 +212,33 @@ GameConfiguration.propTypes = {
 
 const styles = {
   mainContainerStyle: {
-    flex: 1
+    flex: 1,
+    backgroundColor: '#F1FAEE'
   },
-  playerCardContainerStyle: {
-    marginTop: 45,
-    height: 60,
-    flexDirection: 'row',
-    alignSelf: 'center',
-    alignItems: 'center',
-    backgroundColor: '#A24936',
-    borderColor: '#A24936'
+  playerCardStyle: {
+    containerStyle: {
+      marginTop: 45,
+      backgroundColor: '#A8DADC',
+      borderColor: '#A8DADC'
+    },
+    wrapperStyle: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }
   },
   playerInputContainerStyle: {
-    flex: 4
+    flex: 4,
+    backgroundColor: 'green'
   },
   addButtonStyle: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center'
+    backgroundColor: 'yellow'
   },
-  playerListCardContainerStyle: {
+  playerListCardStyle: {
     height: 200,
-    backgroundColor: '#282B28',
-    borderColor: '#A24936'
+    backgroundColor: '#A8DADC',
+    borderColor: '#A8DADC'
   },
   normalTextStyle: {
     fontSize: 18,
@@ -287,12 +293,12 @@ const mapStateToProps = (state) => {
   var beginGameButtonDisabled = true
 
   if (playersList.length > 1) {
-    styles.beginGameButtonStyle.opacity = 1
-    styles.beginGameButtonStyle.shadowOpacity = 0.4
+    styles.beginGameButtonStyle = { ...styles.beginGameButtonStyle, opacity: 0.2 }
+    styles.beginGameButtonStyle = { ...styles.beginGameButtonStyle, shadowOpacity: 0.4 }
     beginGameButtonDisabled = false
   } else {
-    styles.beginGameButtonStyle.opacity = 0.2
-    styles.beginGameButtonStyle.shadowOpacity = 0
+    styles.beginGameButtonStyle = { ...styles.beginGameButtonStyle, opacity: 0.2 }
+    styles.beginGameButtonStyle = { ...styles.beginGameButtonStyle, shadowOpacity: 0 }
     beginGameButtonDisabled = true
   }
 
