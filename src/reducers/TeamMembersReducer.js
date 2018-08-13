@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { TEAMS_UPDATED, TEAM_CHANGE } from '../actions/types'
+import { TEAMS_UPDATED, TEAM_CHANGE, RESET_TEAMS } from '../actions/types'
 
 const INITIAL_STATE = { teamA: [], teamB: [] }
 
@@ -34,6 +34,9 @@ export default (state = INITIAL_STATE, action) => {
       }
 
       return { teamA, teamB }
+    }
+    case RESET_TEAMS: {
+      return INITIAL_STATE
     }
     default:
       return state

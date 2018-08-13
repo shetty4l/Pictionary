@@ -253,7 +253,9 @@ const styles = {
   playerListCardStyle: {
     height: 200,
     backgroundColor: '#A8DADC',
-    borderColor: '#A8DADC'
+    borderColor: '#A8DADC',
+    paddingTop: 0,
+    paddingBottom: 0
   },
   normalTextStyle: {
     fontSize: 18,

@@ -3,8 +3,11 @@ import {
   TEAM_B_NAME_CHANGED,
   TEAMS_UPDATED,
   TEAM_CHANGE,
+  RESET_TEAM_NAMES,
+  RESET_TEAMS,
   INIT_PLAYING_QUEUE,
   UPDATE_PLAYER,
+  RESET_PLAYING_QUEUE,
   NEW_WORD_FIREBASE_URL
 } from './types'
 
@@ -37,6 +40,18 @@ export const teamChange = (player) => {
   }
 }
 
+export const resetTeams = () => {
+  return {
+    type: RESET_TEAMS
+  }
+}
+
+export const resetTeamNames = () => {
+  return {
+    type: RESET_TEAM_NAMES
+  }
+}
+
 export const initPlayingQueue = (teamMembers) => {
   return async (dispatch) => {
     let promiseArray = []
@@ -63,5 +78,11 @@ export const updatePlayer = (player, wordsAlreadyAppeared, scoreEntry) => {
     })
     const word = await response.json()
     dispatch({ type: UPDATE_PLAYER, payload: { scoreEntry, word } })
+  }
+}
+
+export const resetPlayingQueue = () => {
+  return {
+    type: RESET_PLAYING_QUEUE
   }
 }

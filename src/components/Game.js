@@ -7,7 +7,11 @@ import PropTypes from 'prop-types'
 import Deck from './Deck'
 
 import {
+  resetTeams,
+  resetTeamNames,
+  resetPlayingQueue,
   resetPlayer,
+  resetPlayerList,
   currentPlayerChange,
   initPlayingQueue,
   updatePlayer,
@@ -18,9 +22,9 @@ import {
 } from '../actions'
 
 const SCREEN_HEIGHT = Dimensions.get('window').height
-const EASY_COLOR = '#FFC107'
-const MEDIUM_COLOR = '#009688'
-const HARD_COLOR = '#673AB7'
+const EASY_COLOR = '#4caf50'
+const MEDIUM_COLOR = '#ffeb3b'
+const HARD_COLOR = '#f44336'
 
 class Game extends Component {
   constructor (props) {
@@ -33,30 +37,24 @@ class Game extends Component {
     this.onNextButton = this.onNextButton.bind(this)
     this.onSuccess = this.onSuccess.bind(this)
     this.onFail = this.onFail.bind(this)
+    this.resetApp = this.resetApp.bind(this)
   }
 
-  componentWillMount () {
-    // await this.props.currentPlayerChange(this.props.playingQueue.queue[0])
-    // this.props.updateWord(this.props.word)
-  }
-
-  onCloseButtonPressed () {
+  resetApp () {
     this.props.resetPlayer()
-    Actions.newGame({ type: 'reset' })
+    this.props.resetPlayerList()
+    this.props.resetTeams()
+    this.props.resetTeamNames()
+    this.props.resetPlayingQueue()
+    this.props.resetTimer()
   }
-
-  async getNewWord () {
-    // const { solved, failed } = this.props.player
-    // const currentConfig = { solved, failed }
-    // await this.props.newWord(currentConfig, this.props.playingQueue.wordsAlreadyAppeared)
+  onCloseButtonPressed () {
+    this.resetApp()
+    Actions.popTo('newGame')
   }
 
   async onStartTimer () {
     this.props.startTimer()
-
-    if (this.props.word.word === this.props.word.stylizedWord.toLowerCase()) {
-      this.getNewWord()
-    }
   }
 
   async onResetTimer () {
@@ -83,7 +81,6 @@ class Game extends Component {
     const scoreEntry = { category, result: 'solved' }
     await this.props.updatePlayer(player, wordsAlreadyAppeared, scoreEntry)
     this.props.currentPlayerChange(queue[currentPlayerIndex + 1])
-    // this.onNextButton()
   }
 
   async onFail () {
@@ -93,7 +90,6 @@ class Game extends Component {
     const scoreEntry = { category, result: 'failed' }
     await this.props.updatePlayer(player, wordsAlreadyAppeared, scoreEntry)
     this.props.currentPlayerChange(queue[currentPlayerIndex + 1])
-    // this.onNextButton()
   }
 
   stylizeWord (word) {
@@ -116,7 +112,7 @@ class Game extends Component {
     return (
       <Card
         flexDirection='column'
-        containerStyle={[wordContainerStyle, { backgroundColor: color }]}
+        containerStyle={[wordContainerStyle, { backgroundColor: color, borderColor: color }]}
         wrapperStyle={{ flex: 1, flexDirection: 'column', justifyContent: 'space-evenly' }}
       >
         <Text style={playerTurnTextStyle}>{player.name}'s Turn</Text>
@@ -210,7 +206,11 @@ Game.propTypes = {
   player: PropTypes.object,
   resetPlayer: PropTypes.func,
   updatePlayer: PropTypes.func,
-  playingQueue: PropTypes.object
+  playingQueue: PropTypes.object,
+  resetPlayerList: PropTypes.func,
+  resetTeams: PropTypes.func,
+  resetTeamNames: PropTypes.func,
+  resetPlayingQueue: PropTypes.func
 }
 
 const styles = {
@@ -270,7 +270,11 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps, {
+  resetTeams,
+  resetTeamNames,
+  resetPlayingQueue,
   resetPlayer,
+  resetPlayerList,
   currentPlayerChange,
   initPlayingQueue,
   updatePlayer,

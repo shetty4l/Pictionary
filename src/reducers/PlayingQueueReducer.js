@@ -1,4 +1,4 @@
-import { INIT_PLAYING_QUEUE, UPDATE_PLAYER } from '../actions/types'
+import { INIT_PLAYING_QUEUE, UPDATE_PLAYER, RESET_PLAYING_QUEUE } from '../actions/types'
 
 const INITIAL_STATE = { queue: [], wordsAlreadyAppeared: [], currentPlayerIndex: 0 }
 
@@ -41,6 +41,9 @@ export default (state = INITIAL_STATE, action) => {
         wordsAlreadyAppeared,
         currentPlayerIndex: state.currentPlayerIndex + 1
       }
+    }
+    case RESET_PLAYING_QUEUE: {
+      return INITIAL_STATE
     }
     default:
       return state

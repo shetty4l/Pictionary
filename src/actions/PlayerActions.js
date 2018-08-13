@@ -3,7 +3,8 @@ import {
   CURRENT_PLAYER_CHANGED,
   RESET_PLAYER,
   PLAYER_ADDED,
-  PLAYER_DELETED
+  PLAYER_DELETED,
+  RESET_PLAYER_LIST
 } from './types'
 import { teamsUpdate } from './TeamActions'
 
@@ -40,5 +41,11 @@ export const playerDelete = (name) => {
     await dispatch({ type: PLAYER_DELETED, payload: name })
     const { players } = getState()
     dispatch(teamsUpdate(players))
+  }
+}
+
+export const resetPlayerList = () => {
+  return {
+    type: RESET_PLAYER_LIST
   }
 }
