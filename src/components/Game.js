@@ -26,6 +26,7 @@ class Game extends Component {
   constructor (props) {
     super(props)
 
+    this.Deck = React.createRef()
     this.onCloseButtonPressed = this.onCloseButtonPressed.bind(this)
     this.onStartTimer = this.onStartTimer.bind(this)
     this.onResetTimer = this.onResetTimer.bind(this)
@@ -145,6 +146,7 @@ class Game extends Component {
 
         <View style={{ height: SCREEN_HEIGHT / 2.5 }}>
           <Deck
+            ref={this.Deck}
             data={this.props.playingQueue.queue}
             renderCard={this.renderCard}
             timer={this.props.timer}
@@ -159,7 +161,7 @@ class Game extends Component {
             name='close'
             color='#aa2e25'
             size={40}
-            onPress={this.onFail}
+            onPress={() => this.Deck.current.forceSwipe('left')}
             reverse
             raised
           />
@@ -167,7 +169,7 @@ class Game extends Component {
             name='check-circle'
             color='#4caf50'
             size={40}
-            onPress={this.onSuccess}
+            onPress={() => this.Deck.current.forceSwipe('right')}
             reverse
             raised
           />
@@ -215,7 +217,7 @@ const styles = {
   mainContainerStyle: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'flex-start'
+    justifyContent: 'space-evenly'
   },
   closeButtonStyle: {
     marginTop: 40,
