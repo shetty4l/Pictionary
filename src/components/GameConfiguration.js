@@ -23,7 +23,7 @@ class GameConfiguration extends Component {
   constructor (props) {
     super(props)
 
-    this.state = { loadingGame: false }
+    this.state = { loadingGame: false, nameErrorMessage: '' }
     this.onNameChange = this.onNameChange.bind(this)
     this.onAddPlayerPressed = this.onAddPlayerPressed.bind(this)
     this.onTeamANameChange = this.onTeamANameChange.bind(this)
@@ -33,13 +33,25 @@ class GameConfiguration extends Component {
 
   onNameChange (text) {
     this.props.playerNameUpdate(text)
+    if (!text || !(/^[A-Za-z]*$/.test(text))) {
+      this.setState({ nameErrorMessage: 'Please enter a valid name' })
+    } else {
+      this.setState({ nameErrorMessage: '' })
+    }
   }
 
   async onAddPlayerPressed () {
     const { name } = this.props.player
     if (name && /^[A-Za-z]*$/.test(name)) {
-      await this.props.playerAdd(this.props.player)
-      this.props.playerNameUpdate('')
+      if (this.props.players && this.props.players.hasOwnProperty(name.toLowerCase())) {
+        this.setState({ nameErrorMessage: 'Player already exists' })
+      } else {
+        await this.props.playerAdd(this.props.player)
+        this.props.playerNameUpdate('')
+        this.setState({ nameErrorMessage: '' })
+      }
+    } else {
+      this.setState({ nameErrorMessage: 'Please enter a valid name' })
     }
   }
 
@@ -91,7 +103,6 @@ class GameConfiguration extends Component {
       beginGameButtonStyle,
       beginGameButtonDisabledStyle
     } = styles
-
     const { teamA, teamB } = this.props.teamMembers
     return (
       <View style={mainContainerStyle}>
@@ -118,6 +129,7 @@ class GameConfiguration extends Component {
             inputStyle={{ color: '#1D3557' }}
             onChangeText={this.onNameChange}
             value={this.props.player.name}
+            errorMessage={this.state.nameErrorMessage}
           />
         </Card>
 
@@ -221,6 +233,7 @@ GameConfiguration.propTypes = {
   playerNameUpdate: PropTypes.func,
   playerAdd: PropTypes.func,
   player: PropTypes.object,
+  players: PropTypes.object,
   playersList: PropTypes.array,
   name: PropTypes.string,
   teamAUpdate: PropTypes.func,
