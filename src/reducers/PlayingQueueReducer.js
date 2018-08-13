@@ -26,7 +26,6 @@ export default (state = INITIAL_STATE, action) => {
         if (teamA[i]) playingQueue.push(teamA[i])
         if (teamB[i]) playingQueue.push(teamB[i])
       }
-      console.log(playingQueue, wordsAlreadyAppeared)
       return { ...state, queue: playingQueue, wordsAlreadyAppeared }
     }
     case UPDATE_PLAYER: {
