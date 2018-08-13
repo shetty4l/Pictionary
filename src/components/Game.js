@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { View, Text } from 'react-native'
+import { View, Text, Dimensions } from 'react-native'
 import { Actions } from 'react-native-router-flux'
+import { Icon, Card } from 'react-native-elements'
 import PropTypes from 'prop-types'
-import { CardContainer, Button, CloseButton } from './common'
+import Deck from './Deck'
+
 import {
   resetPlayer,
   currentPlayerChange,
@@ -14,6 +16,8 @@ import {
   startTimer,
   resetTimer
 } from '../actions'
+
+const SCREEN_HEIGHT = Dimensions.get('window').height
 
 class Game extends Component {
   constructor (props) {
@@ -86,65 +90,98 @@ class Game extends Component {
     // this.onNextButton()
   }
 
+  renderCard (player, timer) {
+    const {
+      wordContainerStyle,
+      wordTextStyle,
+      timerTextStyle
+    } = styles
+
+    return (
+      <Card
+        flexDirection='column'
+        containerStyle={wordContainerStyle}
+        wrapperStyle={{ flex: 1, flexDirection: 'column', justifyContent: 'space-evenly' }}
+      >
+        <Text style={wordTextStyle}>{player.word.word}</Text>
+        <Text style={timerTextStyle}>{timer}</Text>
+      </Card>
+      // {/* <CardContainer style={wordContainerStyle}>
+      //   <Text style={wordTextStyle}>{player.word.word}</Text>
+      //   <Text style={timerTextStyle}>{timer}</Text>
+      // </CardContainer> */}
+    )
+  }
+
   render () {
     const {
       mainContainerStyle,
       closeButtonStyle,
       playerTurnTextStyle,
-      wordContainerStyle,
-      wordTextStyle,
-      timerTextStyle,
-      actionButtonsContainerStyle,
-      actionButtonStyle,
-      nextButtonStyle
+      actionButtonsContainerStyle
     } = styles
 
     return (
       <View style={mainContainerStyle}>
-        <CloseButton style={closeButtonStyle} onPress={this.onCloseButtonPressed} />
-        <Text style={playerTurnTextStyle}>{this.props.player.name}'s Turn</Text>
+        <View style={closeButtonStyle}>
+          <Icon
+            reverse
+            name='close'
+            size={10}
+            onPress={this.onCloseButtonPressed}
+          />
+        </View>
 
-        <CardContainer style={wordContainerStyle}>
-          <Text style={wordTextStyle}>{this.props.player.word.word}</Text>
-          <Text style={timerTextStyle}>{this.props.timer}</Text>
-        </CardContainer>
+        <View>
+          <Text style={playerTurnTextStyle}>{this.props.player.name}'s Turn</Text>
+        </View>
 
-        <View style={actionButtonsContainerStyle}>
-          <Button
-            style={{ buttonStyle: actionButtonStyle }}
+        <View style={{ height: SCREEN_HEIGHT / 2.5 }}>
+          <Deck
+            data={this.props.playingQueue.queue}
+            renderCard={this.renderCard}
+            timer={this.props.timer}
+          />
+        </View>
+
+        <View style={[actionButtonsContainerStyle, { marginTop: 30, justifyContent: 'center' }]}>
+          <Icon
+            name='close'
+            color='#aa2e25'
+            size={30}
+            onPress={this.onFail}
+            reverse
+            raised
+          />
+          <Icon
+            name='check-circle'
+            color='#4caf50'
+            size={30}
+            onPress={this.onSuccess}
+            reverse
+            raised
+          />
+        </View>
+        <View style={[actionButtonsContainerStyle, { justifyContent: 'space-between' }]}>
+          <Icon
+            reverse
+            raised
+            name='timer-off'
+            size={30}
             onPress={this.onResetTimer}
           >
             Reset
-          </Button>
-          <Button
-            style={{ buttonStyle: actionButtonStyle }}
+          </Icon>
+          <Icon
+            reverse
+            raised
+            name='timer'
+            size={30}
             onPress={this.onStartTimer}
           >
               Start
-          </Button>
+          </Icon>
         </View>
-
-        {/* <Button
-          style={{ buttonStyle: nextButtonStyle }}
-          onPress={this.onNextButton}
-        >
-          Next
-        </Button> */}
-
-        <Button
-          style={{ buttonStyle: nextButtonStyle }}
-          onPress={this.onSuccess}
-        >
-          Success
-        </Button>
-
-        <Button
-          style={{ buttonStyle: nextButtonStyle }}
-          onPress={this.onFail}
-        >
-          Fail
-        </Button>
-
       </View>
     )
   }
@@ -167,7 +204,8 @@ Game.propTypes = {
 const styles = {
   mainContainerStyle: {
     flex: 1,
-    backgroundColor: '#282B28'
+    flexDirection: 'column',
+    justifyContent: 'flex-start'
   },
   closeButtonStyle: {
     marginTop: 40,
@@ -180,26 +218,22 @@ const styles = {
     color: '#FFF'
   },
   wordContainerStyle: {
-    marginLeft: 20,
-    marginRight: 20,
-    height: '30%',
-    borderRadius: 16,
-    flexDirection: 'column',
-    justifyContent: 'space-evenly'
+    height: '100%',
+    borderRadius: 5
   },
   wordTextStyle: {
-    fontSize: 36,
-    alignSelf: 'center'
+    fontSize: 48,
+    alignSelf: 'center',
+    color: '#000'
   },
   timerTextStyle: {
-    fontSize: 24,
+    fontSize: 36,
     alignSelf: 'center'
   },
   actionButtonsContainerStyle: {
     flexDirection: 'row',
     marginLeft: 20,
-    marginRight: 20,
-    marginTop: 30
+    marginRight: 20
   },
   actionButtonStyle: {
     flex: 1,
