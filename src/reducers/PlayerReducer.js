@@ -2,8 +2,8 @@ import { NAME_CHANGED, CURRENT_PLAYER_CHANGED, RESET_PLAYER } from '../actions/t
 
 const INITIAL_STATE = {
   name: '',
-  solved: { easy: 0, medium: 0, hard: 0 },
-  failed: { easy: 0, medium: 0, hard: 0 }
+  score: [],
+  word: null
 }
 
 export default (state = INITIAL_STATE, action) => {
