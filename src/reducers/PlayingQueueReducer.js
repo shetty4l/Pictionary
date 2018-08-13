@@ -1,6 +1,6 @@
 import { INIT_PLAYING_QUEUE, UPDATE_PLAYER } from '../actions/types'
 
-const INITIAL_STATE = { queue: [], wordsAlreadyAppeared: [] }
+const INITIAL_STATE = { queue: [], wordsAlreadyAppeared: [], currentPlayerIndex: 0 }
 
 export default (state = INITIAL_STATE, action) => {
   switch (action.type) {
@@ -31,11 +31,16 @@ export default (state = INITIAL_STATE, action) => {
     case UPDATE_PLAYER: {
       const { scoreEntry, word } = action.payload
       let playingQueue = [ ...state.queue ]
-      let player = playingQueue.shift()
+      let player = playingQueue[state.currentPlayerIndex]
       player = { ...player, score: [...player.score, scoreEntry], word }
       const wordsAlreadyAppeared = [ ...state.wordsAlreadyAppeared, word.word ]
       playingQueue.push(player)
-      return { ...state, queue: playingQueue, wordsAlreadyAppeared }
+      return {
+        ...state,
+        queue: playingQueue,
+        wordsAlreadyAppeared,
+        currentPlayerIndex: state.currentPlayerIndex + 1
+      }
     }
     default:
       return state
