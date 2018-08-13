@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
-import { Text, TextInput, View, FlatList } from 'react-native'
+import { Text, View, FlatList } from 'react-native'
 import { Icon, Card, Button, Input } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { Actions } from 'react-native-router-flux'
@@ -79,15 +79,13 @@ class GameConfiguration extends Component {
     const {
       mainContainerStyle,
       playerCardStyle,
-      playerInputContainerStyle,
-      addButtonStyle,
       playerListCardStyle,
       normalTextStyle,
-      teamNameTextStyle,
-      outerTeamsCardContainerStyle,
+      outerTeamsCardStyle,
       teamsViewContainerStyle,
-      teamsCardContainerStyle,
-      beginGameButtonStyle
+      teamsCardStyle,
+      beginGameButtonStyle,
+      beginGameButtonDisabledStyle
     } = styles
 
     return (
@@ -129,26 +127,35 @@ class GameConfiguration extends Component {
           />
         </Card>
 
-        <Card containerStyle={outerTeamsCardContainerStyle}>
-          <View style={{ flex: 1 }}>
-            <Text style={[normalTextStyle, { paddingLeft: 20 }]}>Team Names:</Text>
-            <TextInput
+        <Card
+          containerStyle={outerTeamsCardStyle.containerStyle}
+          wrapperStyle={outerTeamsCardStyle.wrapperStyle}
+        >
+          <View>
+            <Input
+              shake
+              label='Team Names'
+              labelStyle={{ color: '#F1FAEE' }}
+              inputStyle={{ color: '#1D3557' }}
               placeholder='Team A'
               autoCapitalize={'words'}
-              style={[normalTextStyle, teamNameTextStyle]}
+              containerStyle={{ width: '100%' }}
               onChangeText={this.onTeamANameChange}
               value={this.props.teamNames.teamAName}
+
             />
-            <TextInput
+            <Input
+              shake
               placeholder='Team B'
               autoCapitalize={'words'}
-              style={[normalTextStyle, teamNameTextStyle]}
+              inputStyle={{ color: '#1D3557' }}
+              containerStyle={{ width: '100%' }}
               onChangeText={this.onTeamBNameChange}
               value={this.props.teamNames.teamBName}
             />
           </View>
 
-          <View style={{ flex: 1.5 }}>
+          <View>
             <View style={teamsViewContainerStyle}>
               <View style={{ flex: 1, alignItems: 'center' }}>
                 <Text style={normalTextStyle}>{this.props.teamNames.teamAName}</Text>
@@ -159,7 +166,10 @@ class GameConfiguration extends Component {
             </View>
 
             <View style={teamsViewContainerStyle}>
-              <Card containerStyle={teamsCardContainerStyle}>
+              <Card
+                containerStyle={[teamsCardStyle.containerStyle, { marginRight: 10 }]}
+                wrapperStyle={teamsCardStyle.wrapperStyle}
+              >
                 <FlatList
                   data={this.props.teamMembers.teamA}
                   extraData={this.props.teamMembers.teamA}
@@ -168,7 +178,10 @@ class GameConfiguration extends Component {
                 />
               </Card>
 
-              <Card containerStyle={teamsCardContainerStyle}>
+              <Card
+                containerStyle={[teamsCardStyle.containerStyle, { marginLeft: 10 }]}
+                wrapperStyle={teamsCardStyle.wrapperStyle}
+              >
                 <FlatList
                   data={this.props.teamMembers.teamB}
                   extraData={this.props.teamMembers.teamB}
@@ -179,11 +192,11 @@ class GameConfiguration extends Component {
             </View>
           </View>
 
-          <View style={{ flex: 0.5 }}>
+          <View>
             <Button
               raised
               title='Begin Game'
-              buttonStyle={beginGameButtonStyle}
+              buttonStyle={[beginGameButtonStyle, this.props.beginGameButtonDisabled ? beginGameButtonDisabledStyle : null]}
               disabled={this.props.beginGameButtonDisabled}
               onPress={this.onBeginGame}
             />
@@ -227,14 +240,6 @@ const styles = {
       alignItems: 'center'
     }
   },
-  playerInputContainerStyle: {
-    flex: 4,
-    backgroundColor: 'green'
-  },
-  addButtonStyle: {
-    flex: 1,
-    backgroundColor: 'yellow'
-  },
   playerListCardStyle: {
     height: 200,
     backgroundColor: '#A8DADC',
@@ -246,60 +251,61 @@ const styles = {
     marginBottom: 5,
     paddingLeft: 10,
     paddingRight: 10,
-    color: '#FFF'
+    color: '#000'
   },
-  outerTeamsCardContainerStyle: {
-    backgroundColor: '#282B28',
-    borderColor: '#A24936',
-    flex: 0.98,
-    flexDirection: 'column',
-    justifyContent: 'flex-start'
-  },
-  teamNameTextStyle: {
-    marginTop: 5,
-    marginLeft: 20,
-    marginRight: 20,
-    borderWidth: 2,
-    paddingTop: 5,
-    paddingBottom: 5,
-    backgroundColor: '#A24936',
-    borderColor: '#A24936'
+  outerTeamsCardStyle: {
+    containerStyle: {
+      backgroundColor: '#A8DADC',
+      borderColor: '#A8DADC',
+      flex: 0.98
+    },
+    wrapperStyle: {
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      alignItems: 'stretch'
+    }
   },
   teamsViewContainerStyle: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginLeft: 15,
-    marginRight: 15
+    width: '100%'
   },
-  teamsCardContainerStyle: {
-    flex: 1,
-    minHeight: 150,
-    flexDirection: 'column',
-    backgroundColor: '#282B28',
-    borderColor: '#A24936'
+  teamsCardStyle: {
+    containerStyle: {
+      flex: 1,
+      minHeight: 150,
+      backgroundColor: '#457B9D',
+      borderColor: '#457B9D',
+      margin: 0,
+      padding: 0
+    },
+    wrapperStyle: {
+      flexDirection: 'column'
+    }
   },
   beginGameButtonStyle: {
-    marginTop: 10,
+    height: 50,
+    backgroundColor: '#E63946',
+    borderColor: '#E63946',
     shadowColor: '#000',
-    shadowOffset: { width: 2, height: 5 },
-    shadowOpacity: 0.4,
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.2,
     shadowRadius: 4
+  },
+  beginGameButtonDisabledStyle: {
+    opacity: 0.2,
+    shadowOpacity: 0
   }
 }
 
 const mapStateToProps = (state) => {
   const { player, players, teamNames, teamMembers, playingQueue } = state
   const playersList = _.map(players, (val, name) => (val))
-  var beginGameButtonDisabled = true
+  let beginGameButtonDisabled = true
 
   if (playersList.length > 1) {
-    styles.beginGameButtonStyle = { ...styles.beginGameButtonStyle, opacity: 0.2 }
-    styles.beginGameButtonStyle = { ...styles.beginGameButtonStyle, shadowOpacity: 0.4 }
     beginGameButtonDisabled = false
-  } else {
-    styles.beginGameButtonStyle = { ...styles.beginGameButtonStyle, opacity: 0.2 }
-    styles.beginGameButtonStyle = { ...styles.beginGameButtonStyle, shadowOpacity: 0 }
-    beginGameButtonDisabled = true
   }
 
   return {
