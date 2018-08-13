@@ -70,7 +70,6 @@ class GameConfiguration extends Component {
       await this.props.initPlayingQueue(this.props.teamMembers)
       this.props.currentPlayerChange(this.props.playingQueue.queue[0])
       this.setState({ loadingGame: !this.state.loadingGame })
-      console.log(this.state.loadingGame)
       Actions.game()
     }
   }

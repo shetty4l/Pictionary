@@ -48,6 +48,7 @@ class Game extends Component {
     this.props.resetPlayingQueue()
     this.props.resetTimer()
   }
+
   onCloseButtonPressed () {
     this.resetApp()
     Actions.popTo('newGame')
