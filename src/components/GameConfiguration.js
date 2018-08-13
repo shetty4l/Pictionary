@@ -8,7 +8,15 @@ import PlayerListItem from './PlayerListItem'
 import TeamMembersListItem from './TeamMembersListItem'
 import { CardContainer, Input, AddButton, Button } from './common'
 import {
-  playerNameUpdate, playerAdd, playerDelete, teamAUpdate, teamBUpdate, teamsUpdate, newWord
+  playerNameUpdate,
+  playerAdd,
+  playerDelete,
+  currentPlayerChange,
+  initPlayingQueue,
+  teamAUpdate,
+  teamBUpdate,
+  teamsUpdate,
+  newWord
 } from '../actions'
 
 class GameConfiguration extends Component {
@@ -20,12 +28,6 @@ class GameConfiguration extends Component {
     this.onTeamANameChange = this.onTeamANameChange.bind(this)
     this.onTeamBNameChange = this.onTeamBNameChange.bind(this)
     this.onBeginGame = this.onBeginGame.bind(this)
-
-    const INITIAL_CONFIG = {
-      solved: { easy: 0, medium: 0, hard: 0 },
-      failed: { easy: 0, medium: 0, hard: 0 }
-    }
-    props.newWord(INITIAL_CONFIG, [])
   }
 
   onNameChange (text) {
@@ -48,9 +50,11 @@ class GameConfiguration extends Component {
     this.props.teamBUpdate(text)
   }
 
-  onBeginGame () {
+  async onBeginGame () {
     const { teamA, teamB } = this.props.teamMembers
     if ((teamA && teamA.length > 0) && (teamB && teamB.length > 0)) {
+      await this.props.initPlayingQueue(this.props.teamMembers)
+      this.props.currentPlayerChange(this.props.playingQueue.queue[0])
       Actions.game()
     }
   }
@@ -190,7 +194,10 @@ GameConfiguration.propTypes = {
   teamNames: PropTypes.object,
   teamMembers: PropTypes.object,
   beginGameButtonDisabled: PropTypes.bool,
-  newWord: PropTypes.func
+  newWord: PropTypes.func,
+  currentPlayerChange: PropTypes.func,
+  initPlayingQueue: PropTypes.func,
+  playingQueue: PropTypes.object
 }
 
 const styles = {
@@ -269,7 +276,7 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-  const { player, players, teamNames, teamMembers } = state
+  const { player, players, teamNames, teamMembers, playingQueue } = state
   const playersList = _.map(players, (val, name) => (val))
   var beginGameButtonDisabled = true
 
@@ -283,13 +290,22 @@ const mapStateToProps = (state) => {
     beginGameButtonDisabled = true
   }
 
-  return { player, players, playersList, teamNames, teamMembers, beginGameButtonDisabled }
+  return {
+    player,
+    players,
+    playersList,
+    playingQueue,
+    teamNames,
+    teamMembers,
+    beginGameButtonDisabled }
 }
 
 export default connect(mapStateToProps, {
   playerNameUpdate,
   playerAdd,
   playerDelete,
+  currentPlayerChange,
+  initPlayingQueue,
   teamAUpdate,
   teamBUpdate,
   teamsUpdate,

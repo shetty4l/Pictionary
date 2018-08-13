@@ -19,7 +19,6 @@ class Game extends Component {
   constructor (props) {
     super(props)
 
-    this.state = { wordsAlreadyAppeared: [] }
     this.onCloseButtonPressed = this.onCloseButtonPressed.bind(this)
     this.onStartTimer = this.onStartTimer.bind(this)
     this.onResetTimer = this.onResetTimer.bind(this)
@@ -28,14 +27,9 @@ class Game extends Component {
     this.onFail = this.onFail.bind(this)
   }
 
-  async componentWillMount () {
-    await this.props.initPlayingQueue(this.props.teamMembers)
-
-    this.props.currentPlayerChange(this.props.playingQueue[0])
-    this.props.updateWord(this.props.word)
-    this.setState({
-      wordsAlreadyAppeared: [ ...this.state.wordsAlreadyAppeared, this.props.word.word ]
-    })
+  componentWillMount () {
+    // await this.props.currentPlayerChange(this.props.playingQueue.queue[0])
+    // this.props.updateWord(this.props.word)
   }
 
   onCloseButtonPressed () {
@@ -44,13 +38,9 @@ class Game extends Component {
   }
 
   async getNewWord () {
-    const { solved, failed } = this.props.player
-    const currentConfig = { solved, failed }
-
-    await this.props.newWord(currentConfig, this.state.wordsAlreadyAppeared)
-    this.setState({
-      wordsAlreadyAppeared: [ ...this.state.wordsAlreadyAppeared, this.props.word.word ]
-    })
+    // const { solved, failed } = this.props.player
+    // const currentConfig = { solved, failed }
+    // await this.props.newWord(currentConfig, this.props.playingQueue.wordsAlreadyAppeared)
   }
 
   async onStartTimer () {
@@ -71,23 +61,29 @@ class Game extends Component {
     if (this.props.word.word === this.props.word.stylizedWord.toLowerCase()) {
       await this.getNewWord()
       await this.props.updateWord(this.props.word)
-      this.props.currentPlayerChange(this.props.playingQueue[0])
+      this.props.currentPlayerChange(this.props.playingQueue.queue[0])
     } else {
       await this.props.updateWord(this.props.word)
-      await this.props.currentPlayerChange(this.props.playingQueue[0])
+      await this.props.currentPlayerChange(this.props.playingQueue.queue[0])
     }
   }
 
   async onSuccess () {
-    const { category } = this.props.word
-    await this.props.updatePlayer(category, true)
-    this.onNextButton()
+    const { player } = this.props
+    const { category } = player.word
+    const scoreEntry = { category, result: 'solved' }
+    await this.props.updatePlayer(player, this.props.playingQueue.wordsAlreadyAppeared, scoreEntry)
+    this.props.currentPlayerChange(this.props.playingQueue.queue[0])
+    // this.onNextButton()
   }
 
   async onFail () {
-    const { category } = this.props.word
-    await this.props.updatePlayer(category, false)
-    this.onNextButton()
+    const { player } = this.props
+    const { category } = player.word
+    const scoreEntry = { category, result: 'failed' }
+    await this.props.updatePlayer(player, this.props.playingQueue.wordsAlreadyAppeared, scoreEntry)
+    this.props.currentPlayerChange(this.props.playingQueue.queue[0])
+    // this.onNextButton()
   }
 
   render () {
@@ -109,7 +105,7 @@ class Game extends Component {
         <Text style={playerTurnTextStyle}>{this.props.player.name}'s Turn</Text>
 
         <CardContainer style={wordContainerStyle}>
-          <Text style={wordTextStyle}>{this.props.word.stylizedWord}</Text>
+          <Text style={wordTextStyle}>{this.props.player.word.word}</Text>
           <Text style={timerTextStyle}>{this.props.timer}</Text>
         </CardContainer>
 
@@ -155,8 +151,6 @@ class Game extends Component {
 }
 
 Game.propTypes = {
-  teamMembers: PropTypes.object,
-  newWord: PropTypes.func,
   updateWord: PropTypes.func,
   word: PropTypes.object,
   startTimer: PropTypes.func,
@@ -167,8 +161,7 @@ Game.propTypes = {
   player: PropTypes.object,
   resetPlayer: PropTypes.func,
   updatePlayer: PropTypes.func,
-  initPlayingQueue: PropTypes.func,
-  playingQueue: PropTypes.array
+  playingQueue: PropTypes.object
 }
 
 const styles = {
@@ -227,14 +220,14 @@ const styles = {
 }
 
 const mapStateToProps = (state) => {
-  const { stylizedCategory } = state.word
+  const { category } = state.player.word
   const { wordContainerStyle } = styles
-  console.log(state.word)
-  if (stylizedCategory === 'easy') {
+
+  if (category === 'easy') {
     styles.wordContainerStyle = { ...wordContainerStyle, backgroundColor: '#FFC107' }
-  } else if (stylizedCategory === 'medium') {
+  } else if (category === 'medium') {
     styles.wordContainerStyle = { ...wordContainerStyle, backgroundColor: '#009688' }
-  } else if (stylizedCategory === 'hard') {
+  } else if (category === 'hard') {
     styles.wordContainerStyle = { ...wordContainerStyle, backgroundColor: '#673AB7' }
   }
 
