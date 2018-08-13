@@ -23,6 +23,7 @@ class GameConfiguration extends Component {
   constructor (props) {
     super(props)
 
+    this.state = { loadingGame: false }
     this.onNameChange = this.onNameChange.bind(this)
     this.onAddPlayerPressed = this.onAddPlayerPressed.bind(this)
     this.onTeamANameChange = this.onTeamANameChange.bind(this)
@@ -51,10 +52,13 @@ class GameConfiguration extends Component {
   }
 
   async onBeginGame () {
+    await this.setState({ loadingGame: !this.state.loadingGame })
     const { teamA, teamB } = this.props.teamMembers
     if ((teamA && teamA.length > 0) && (teamB && teamB.length > 0)) {
       await this.props.initPlayingQueue(this.props.teamMembers)
       this.props.currentPlayerChange(this.props.playingQueue.queue[0])
+      this.setState({ loadingGame: !this.state.loadingGame })
+      console.log(this.state.loadingGame)
       Actions.game()
     }
   }
@@ -88,6 +92,7 @@ class GameConfiguration extends Component {
       beginGameButtonDisabledStyle
     } = styles
 
+    const { teamA, teamB } = this.props.teamMembers
     return (
       <View style={mainContainerStyle}>
         <Card
@@ -158,10 +163,14 @@ class GameConfiguration extends Component {
           <View>
             <View style={teamsViewContainerStyle}>
               <View style={{ flex: 1, alignItems: 'center' }}>
-                <Text style={normalTextStyle}>{this.props.teamNames.teamAName}</Text>
+                <Text style={normalTextStyle}>
+                  {teamA.length ? this.props.teamNames.teamAName : ''}
+                </Text>
               </View>
               <View style={{ flex: 1, alignItems: 'center' }}>
-                <Text style={normalTextStyle}>{this.props.teamNames.teamBName}</Text>
+                <Text style={normalTextStyle}>
+                  {teamB.length ? this.props.teamNames.teamBName : ''}
+                </Text>
               </View>
             </View>
 
@@ -199,6 +208,7 @@ class GameConfiguration extends Component {
               buttonStyle={[beginGameButtonStyle, this.props.beginGameButtonDisabled ? beginGameButtonDisabledStyle : null]}
               disabled={this.props.beginGameButtonDisabled}
               onPress={this.onBeginGame}
+              loading={this.state.loadingGame}
             />
           </View>
         </Card>
@@ -275,8 +285,8 @@ const styles = {
     containerStyle: {
       flex: 1,
       minHeight: 150,
-      backgroundColor: '#457B9D',
-      borderColor: '#457B9D',
+      backgroundColor: 'transparent',
+      borderColor: 'transparent',
       margin: 0,
       padding: 0
     },
