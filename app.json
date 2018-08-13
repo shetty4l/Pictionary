@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Pictionary",
-    "description": "This project is really great.",
+    "description": "A React Native application for the popular charades-inspired board game that uses a regression model to present words to the player.",
     "slug": "pictionary",
     "privacy": "public",
     "sdkVersion": "29.0.0",
@@ -25,6 +25,7 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "githubUrl": "https://github.com/Shetty4L/Pictionary"
   }
 }
