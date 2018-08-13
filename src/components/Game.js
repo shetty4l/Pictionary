@@ -80,6 +80,7 @@ class Game extends Component {
     const { category } = player.word
     const { queue, wordsAlreadyAppeared, currentPlayerIndex } = this.props.playingQueue
     const scoreEntry = { category, result: 'solved' }
+    this.onResetTimer()
     await this.props.updatePlayer(player, wordsAlreadyAppeared, scoreEntry)
     this.props.currentPlayerChange(queue[currentPlayerIndex + 1])
   }
@@ -89,6 +90,7 @@ class Game extends Component {
     const { category } = player.word
     const { queue, wordsAlreadyAppeared, currentPlayerIndex } = this.props.playingQueue
     const scoreEntry = { category, result: 'failed' }
+    this.onResetTimer()
     await this.props.updatePlayer(player, wordsAlreadyAppeared, scoreEntry)
     this.props.currentPlayerChange(queue[currentPlayerIndex + 1])
   }
