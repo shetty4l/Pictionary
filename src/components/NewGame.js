@@ -19,8 +19,7 @@ const NewGame = () => {
 const styles = {
   mainContainerStyle: {
     flex: 1,
-    justifyContent: 'center',
-    backgroundColor: '#282B28'
+    justifyContent: 'center'
   },
   cardContainerStyle: {
     height: '75%',

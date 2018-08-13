@@ -1,12 +1,13 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 import { Text, TextInput, View, FlatList } from 'react-native'
+import { Icon } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { Actions } from 'react-native-router-flux'
 import PropTypes from 'prop-types'
 import PlayerListItem from './PlayerListItem'
 import TeamMembersListItem from './TeamMembersListItem'
-import { CardContainer, Input, AddButton, Button } from './common'
+import { CardContainer, Input, Button } from './common'
 import {
   playerNameUpdate,
   playerAdd,
@@ -105,7 +106,14 @@ class GameConfiguration extends Component {
             }}
           />
           <View style={addButtonStyle}>
-            <AddButton onPress={this.onAddPlayerPressed} />
+            <Icon
+              raised
+              reverse
+              name='add'
+              size={15}
+              color='#83BCA9'
+              onPress={this.onAddPlayerPressed}
+            />
           </View>
         </CardContainer>
 
@@ -194,7 +202,6 @@ GameConfiguration.propTypes = {
   teamNames: PropTypes.object,
   teamMembers: PropTypes.object,
   beginGameButtonDisabled: PropTypes.bool,
-  newWord: PropTypes.func,
   currentPlayerChange: PropTypes.func,
   initPlayingQueue: PropTypes.func,
   playingQueue: PropTypes.object
@@ -202,8 +209,7 @@ GameConfiguration.propTypes = {
 
 const styles = {
   mainContainerStyle: {
-    flex: 1,
-    backgroundColor: '#282B28'
+    flex: 1
   },
   playerCardContainerStyle: {
     marginTop: 45,
