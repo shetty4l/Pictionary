@@ -15,7 +15,6 @@ class PlayerListItem extends Component {
 
   onPress () {
     this.setState({ checked: !this.state.checked })
-    // playerDelete(player.name)
   }
 
   onLongPress () {
@@ -34,7 +33,7 @@ class PlayerListItem extends Component {
           iconRight
           iconType='material'
           checkedIcon='clear'
-          uncheckedIcon='add'
+          uncheckedIcon='check'
           checkedColor='red'
           uncheckedColor='#F1FAEE'
           checked={this.state.checked}
