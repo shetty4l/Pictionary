@@ -31,7 +31,7 @@ class TeamMembersListItem extends Component {
           title={this.props.player.name}
           iconRight={this.props.player.team === 1}
           iconType='material'
-          checkedIcon='clear'
+          checkedIcon={this.props.player.team ? 'chevron-right' : 'chevron-left'}
           uncheckedIcon={this.props.player.team ? 'chevron-right' : 'chevron-left'}
           checkedColor='#F1FAEE'
           uncheckedColor='#E63946'
