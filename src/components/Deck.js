@@ -10,6 +10,7 @@ class Deck extends Component {
   constructor (props) {
     super(props)
 
+    this.forceSwipe = this.forceSwipe.bind(this)
     const position = new Animated.ValueXY()
     const panResponder = PanResponder.create({
       onStartShouldSetPanResponder: () => true,
