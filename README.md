@@ -1,6 +1,6 @@
 ﻿# Pictionary
 
-This is a React Native application for the popular charades-inspired [board game](https://en.wikipedia.org/wiki/Pictionary).  There's no board and no die, each player gets has to make his/her teammates correctly guess the word presented by the application. 
+This is a React Native application for the popular charades-inspired [board game](https://en.wikipedia.org/wiki/Pictionary).  There's no board and no die, each player has to make his/her teammates correctly guess the word presented by the application.
 
 ## Preview
 
