@@ -41,4 +41,5 @@ This will run a local server that will host your app. You can now navigate to yo
 - [React Native Router Flux](https://github.com/aksonov/react-native-router-flux)
 - [React Native Elements](https://react-native-training.github.io/react-native-elements/)
 
-
+## License
+This project is licensed under the MIT License - see the LICENSE.md file for details
